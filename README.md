@@ -80,7 +80,7 @@ Use the hash to register the plugin with vault:
 
 Once registered, just like in dev mode, it's ready to be enabled as a secret engine:
 ```
- ./vault secrets enable -path=ethereum -description="Eth Signing Wallet" -plugin-name=ethsign plugin
+ ./vault secrets enable -path=ethereum -description="Eth Signing Wallet" -plugin-name=eth-hsm plugin
 ```
 
 ## Interacting with the ethsign Plugin
