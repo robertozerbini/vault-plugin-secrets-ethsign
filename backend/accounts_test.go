@@ -170,7 +170,8 @@ func TestAccounts(t *testing.T) {
 		"data":     dataToSign,
 		"gas":      500000,
 		"nonce":    "0x2",
-		"gasPrice": 0,
+		"maxFeePerGas": 100,
+		"maxPriorityFeePerGas" : 100
 	}
 	req.Data = data
 	resp, err = b.HandleRequest(context.Background(), req)
@@ -199,7 +200,8 @@ func TestAccounts(t *testing.T) {
 		"to":       "0xf809410b0d6f047c603deb311979cd413e025a84",
 		"gas":      50000,
 		"nonce":    "0x3",
-		"gasPrice": 0,
+		"maxFeePerGas": 100,
+		"maxPriorityFeePerGas" : 100,
 		"chainId":  12345,
 	}
 	req.Data = data
@@ -224,7 +226,8 @@ func TestAccounts(t *testing.T) {
 		"to":       "0xf809410b0d6f047c603deb311979cd413e025a84",
 		"gas":      50000,
 		"nonce":    "0x3",
-		"gasPrice": 0,
+		"maxFeePerGas": 100,
+		"maxPriorityFeePerGas" : 100,
 		"chainId":  12345,
 	}
 	req.Data = data
