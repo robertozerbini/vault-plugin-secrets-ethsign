@@ -42,9 +42,14 @@ func pathSign(b *backend) *framework.Path {
 				Description: "(optional, default: 90000) Integer of the gas provided for the transaction execution. It will return unused gas",
 				Default:     "90000",
 			},
-			"gasPrice": &framework.FieldSchema{
+			"maxFeePerGas": &framework.FieldSchema{
 				Type:        framework.TypeString,
-				Description: "(optional, default: 0) The gas price for the transaction in wei.",
+				Description: "(optional, default: 0) the maximum amount of gas to be included as a tip to the miner",
+				Default:     "0",
+			},
+			"maxPriorityFeePerGas": &framework.FieldSchema{
+				Type:        framework.TypeString,
+				Description: "(optional, default: 0)  the maximum amount of gas willing to be paid for the transaction (inclusive of baseFeePerGas and maxPriorityFeePerGas)",
 				Default:     "0",
 			},
 			"chainId": &framework.FieldSchema{
