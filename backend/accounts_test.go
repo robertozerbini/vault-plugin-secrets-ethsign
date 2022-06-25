@@ -171,7 +171,7 @@ func TestAccounts(t *testing.T) {
 		"gas":      500000,
 		"nonce":    "0x2",
 		"maxFeePerGas": 100,
-		"maxPriorityFeePerGas" : 100
+		"maxPriorityFeePerGas" : 100,
 	}
 	req.Data = data
 	resp, err = b.HandleRequest(context.Background(), req)
