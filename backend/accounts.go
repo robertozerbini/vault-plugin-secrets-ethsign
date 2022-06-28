@@ -46,7 +46,7 @@ type DynamicFeeTx struct {
 	To         *common.Address `rlp:"nil"` // nil means contract creation
 	Value      *big.Int
 	Data       []byte
-	AccessList AccessList
+	//AccessList AccessList
 
 	// Signature values
 	V *big.Int `json:"v" gencodec:"required"`
