@@ -272,7 +272,7 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 					Value:     amount,
 					GasTipCap: maxFeePerGas,
 					GasFeeCap: maxPriorityFeePerGas,
-					Data: txDataToSign
+					Data: txDataToSign,
 				})
 	} else {
 		toAddress := common.HexToAddress(rawAddressTo)
@@ -283,7 +283,7 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 					Value:     amount,
 					GasTipCap: maxFeePerGas,
 					GasFeeCap: maxPriorityFeePerGas,
-					Data: txDataToSign
+					Data: txDataToSign,
 				})
 	}
 	var signer types.Signer
