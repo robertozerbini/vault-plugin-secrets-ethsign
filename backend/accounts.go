@@ -266,10 +266,25 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 
 	var tx *types.Transaction
 	if rawAddressTo == "" {
-		tx = types.NewContractCreation(nonce, amount, gasLimit, maxFeePerGas, maxPriorityFeePerGas, txDataToSign)
+		tx = types.NewTx(&DynamicFeeTx{
+					Nonce:     nonce,
+					Gas:       gasLimit,
+					Value:     amount,
+					GasTipCap: maxFeePerGas,
+					GasFeeCap: maxPriorityFeePerGas,
+					Data: txDataToSign
+				})
 	} else {
 		toAddress := common.HexToAddress(rawAddressTo)
-		tx = types.NewTransaction(nonce, toAddress, amount, gasLimit, maxFeePerGas, maxPriorityFeePerGas, txDataToSign)
+		tx = types.NewTx(&DynamicFeeTx{
+					Nonce:     nonce,
+					Gas:       gasLimit,
+					To:        toAddress,
+					Value:     amount,
+					GasTipCap: maxFeePerGas,
+					GasFeeCap: maxPriorityFeePerGas,
+					Data: txDataToSign
+				})
 	}
 	var signer types.Signer
 	if big.NewInt(0).Cmp(chainId) == 0 {
