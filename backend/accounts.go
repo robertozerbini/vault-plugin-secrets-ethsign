@@ -36,30 +36,7 @@ const (
 	// InvalidAddress intends to prevent empty address_to
 	InvalidAddress string = "InvalidAddress"
 )
-// AccessList is an EIP-2930 access list.
-type AccessList []AccessTuple
 
-// AccessTuple is the element type of an access list.
-type AccessTuple struct {
-	Address     common.Address `json:"address"        gencodec:"required"`
-	StorageKeys []common.Hash  `json:"storageKeys"    gencodec:"required"`
-}
-type DynamicFeeTx struct {
-	ChainID    *big.Int
-	Nonce      uint64
-	GasTipCap  *big.Int // a.k.a. maxPriorityFeePerGas
-	GasFeeCap  *big.Int // a.k.a. maxFeePerGas
-	Gas        uint64
-	To         *common.Address `rlp:"nil"` // nil means contract creation
-	Value      *big.Int
-	Data       []byte
-	AccessList AccessList
-
-	// Signature values
-	V *big.Int `json:"v" gencodec:"required"`
-	R *big.Int `json:"r" gencodec:"required"`
-	S *big.Int `json:"s" gencodec:"required"`
-}
 // Account is an Ethereum account
 type Account struct {
 	Address    string `json:"address"`
