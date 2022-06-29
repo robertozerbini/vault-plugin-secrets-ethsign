@@ -279,7 +279,7 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 		tx = types.NewTx(&types.DynamicFeeTx{
 					Nonce:     nonce,
 					Gas:       gasLimit,
-					To:        toAddress,
+					To:        &toAddress,
 					Value:     amount,
 					GasTipCap: maxFeePerGas,
 					GasFeeCap: maxPriorityFeePerGas,
