@@ -266,7 +266,7 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 
 	var tx *types.Transaction
 	if rawAddressTo == "" {
-		tx = types.NewTx(&DynamicFeeTx{
+		tx = types.NewTx(&types.DynamicFeeTx{
 					Nonce:     nonce,
 					Gas:       gasLimit,
 					Value:     amount,
@@ -276,7 +276,7 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 				})
 	} else {
 		toAddress := common.HexToAddress(rawAddressTo)
-		tx = types.NewTx(&DynamicFeeTx{
+		tx = types.NewTx(&types.DynamicFeeTx{
 					Nonce:     nonce,
 					Gas:       gasLimit,
 					To:        toAddress,
