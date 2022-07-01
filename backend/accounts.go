@@ -27,6 +27,7 @@ import (
 	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
+        "github.com/ethereum/go-ethereum/params"
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/logical"
 	"golang.org/x/crypto/sha3"
@@ -290,7 +291,9 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 	if big.NewInt(0).Cmp(chainId) == 0 {
 		signer = types.HomesteadSigner{}
 	} else {
-		signer = types.LatestSigner()
+		signer = types.LatestSigner(&params.ChainConfig{
+								ChainID: chainId,
+								})
 	}
 	signedTx, err := types.SignTx(tx, signer, privateKey)
 	if err != nil {
