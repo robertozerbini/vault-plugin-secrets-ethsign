@@ -288,13 +288,14 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 				})
 	}
 	var signer types.Signer
-	if big.NewInt(0).Cmp(chainId) == 0 {
-		signer = types.HomesteadSigner{}
-	} else {
-		signer = types.LatestSigner(&params.ChainConfig{
-								ChainID: chainId,
-								})
-	}
+	//if big.NewInt(0).Cmp(chainId) == 0 {
+	//	signer = types.HomesteadSigner{}
+	//} else {
+	signer = types.LatestSigner(&params.ChainConfig{
+							ChainID: chainId,
+							})
+	//}
+	
 	signedTx, err := types.SignTx(tx, signer, privateKey)
 	if err != nil {
 		b.Logger().Error("Failed to sign the transaction object", "error", err)
