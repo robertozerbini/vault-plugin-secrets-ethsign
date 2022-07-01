@@ -291,9 +291,7 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 	//if big.NewInt(0).Cmp(chainId) == 0 {
 	//	signer = types.HomesteadSigner{}
 	//} else {
-	signer = types.LatestSigner(&params.ChainConfig{
-							ChainID: chainId,
-							})
+	signer = types.LatestSignerForChainID(chainId)
 	//}
 	
 	signedTx, err := types.SignTx(tx, signer, privateKey)
