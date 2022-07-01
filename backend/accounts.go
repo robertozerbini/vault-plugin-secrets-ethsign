@@ -1,4 +1,4 @@
-// Copyright © 2020 Kaleido
+// Copyright © 2020 Kaleido,Copyright © 2022 Roberto Zerbini
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -290,7 +290,7 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 	if big.NewInt(0).Cmp(chainId) == 0 {
 		signer = types.HomesteadSigner{}
 	} else {
-		signer = types.NewEIP155Signer(chainId)
+		signer = types.LatestSigner(chainId)
 	}
 	signedTx, err := types.SignTx(tx, signer, privateKey)
 	if err != nil {
