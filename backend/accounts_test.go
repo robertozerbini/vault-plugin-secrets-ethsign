@@ -172,6 +172,7 @@ func TestAccounts(t *testing.T) {
 		"nonce":    "0x2",
 		"maxFeePerGas": 100,
 		"maxPriorityFeePerGas" : 100,
+		"chainId":  12345,
 	}
 	req.Data = data
 	resp, err = b.HandleRequest(context.Background(), req)
