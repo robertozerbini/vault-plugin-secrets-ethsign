@@ -189,7 +189,7 @@ func TestAccounts(t *testing.T) {
 	v, _, _ := tx.RawSignatureValues()
 	assert.Equal(true, contains([]*big.Int{big.NewInt(27), big.NewInt(28)}, v))
 
-	sender, _ := types.Sender(types.HomesteadSigner{}, &tx)
+	sender, _ := types.Sender(types.LatestSignerForChainID(12345), &tx)
 	assert.Equal(address1, strings.ToLower(sender.Hex()))
 
 	// sign TX by address without "0x" using EIP155 signer
