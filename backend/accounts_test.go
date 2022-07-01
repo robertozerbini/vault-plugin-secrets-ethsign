@@ -186,7 +186,7 @@ func TestAccounts(t *testing.T) {
 	if err != nil {
 		t.Fatalf("err: %v", err)
 	}
-	v, _, _ := tx.RawSignatureValues()
+	//v, _, _ := tx.RawSignatureValues()
 	//assert.Equal(true, contains([]*big.Int{big.NewInt(27), big.NewInt(28)}, v))
 
 	sender, _ := types.Sender(types.LatestSignerForChainID(big.NewInt(12345)), &tx)
@@ -216,7 +216,7 @@ func TestAccounts(t *testing.T) {
 	if err != nil {
 		t.Fatalf("err: %v", err)
 	}
-	v, _, _ = tx.RawSignatureValues()
+	//v, _, _ = tx.RawSignatureValues()
 	//assert.Equal(true, contains([]*big.Int{big.NewInt(24725), big.NewInt(24726)}, v))
 
 	sender, _ = types.Sender(types.LatestSignerForChainID(big.NewInt(12345)), &tx)
