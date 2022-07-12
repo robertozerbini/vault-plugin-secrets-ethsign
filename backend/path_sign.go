@@ -25,10 +25,10 @@ func pathSign(b *backend) *framework.Path {
 				Type:        framework.TypeString,
 				Description: "The compiled code of a contract OR the hash of the invoked method signature and encoded parameters.",
 			},
-			"input": &framework.FieldSchema{
-				Type:        framework.TypeString,
-				Description: "The compiled code of a contract OR the hash of the invoked method signature and encoded parameters.",
-			},
+			//"input": &framework.FieldSchema{
+			//	Type:        framework.TypeString,
+			//	Description: "The compiled code of a contract OR the hash of the invoked method signature and encoded parameters.",
+			//},
 			"value": &framework.FieldSchema{
 				Type:        framework.TypeString,
 				Description: "(optional) Integer of the value sent with this transaction (in wei).",
