@@ -223,7 +223,7 @@ func TestAccounts(t *testing.T) {
 	assert.Equal(address1, strings.ToLower(sender.Hex()))
 
 	data = map[string]interface{}{
-		"input":    dataToSign,
+		"data":    dataToSign,
 		"to":       "0xf809410b0d6f047c603deb311979cd413e025a84",
 		"gas":      50000,
 		"nonce":    "0x3",
