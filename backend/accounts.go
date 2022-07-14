@@ -256,7 +256,7 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 		return nil, fmt.Errorf("Invalid maxFeePerGas limit")
 	}
 	maxFeePerGas := new(big.Int)
-	maxFeePerGas, ok := n.SetString(maxFeePerGasIn, 10)
+	maxFeePerGas, ok := maxFeePerGas.SetString(maxFeePerGasIn, 10)
 	    if !ok {
 		b.Logger().Error("maxFeePerGas SetString: error")
 		return nil, fmt.Errorf("maxFeePerGas SetString: error")
@@ -268,7 +268,7 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 		return nil, fmt.Errorf("Invalid maxPriorityFeePerGas limit")
 	}
 	maxPriorityFeePerGas := new(big.Int)
-	maxPriorityFeePerGas, ok := n.SetString(maxPriorityFeePerGasIn, 10)
+	maxPriorityFeePerGas, ok := maxPriorityFeePerGas.SetString(maxPriorityFeePerGasIn, 10)
 	    if !ok {
 		b.Logger().Error("maxPriorityFeePerGas SetString: error")
 		return nil, fmt.Errorf("maxPriorityFeePerGas SetString: error")
