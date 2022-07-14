@@ -278,6 +278,9 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 	nonce = nonceIn.Uint64()
 
 	var tx *types.Transaction
+	
+	accesses  = AccessList{{Address: &toAddress, StorageKeys: []common.Hash{{0}}}}
+	
 	if rawAddressTo == "" {
 		tx = types.NewTx(&types.DynamicFeeTx{
 					Nonce:     nonce,
