@@ -255,14 +255,24 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 		b.Logger().Error("Invalid maxFeePerGas", "gas", data.Get("maxFeePerGas").(string))
 		return nil, fmt.Errorf("Invalid maxFeePerGas limit")
 	}
-	maxFeePerGas := maxFeePerGasIn.Uint64()
-	
+	maxFeePerGas := new(big.Int)
+	maxFeePerGas, ok := n.SetString(maxFeePerGasIn, 10)
+	    if !ok {
+		b.Logger().Error("maxFeePerGas SetString: error")
+		return nil, fmt.Errorf("maxFeePerGas SetString: error")
+	    }
+		
 	maxPriorityFeePerGasIn := ValidNumber(data.Get("maxPriorityFeePerGas").(string))
 	if maxPriorityFeePerGasIn == nil {
 		b.Logger().Error("Invalid maxPriorityFeePerGas", "gas", data.Get("maxPriorityFeePerGas").(string))
 		return nil, fmt.Errorf("Invalid maxPriorityFeePerGas limit")
 	}
-	maxPriorityFeePerGas := maxPriorityFeePerGasIn.Uint64()
+	maxPriorityFeePerGas := new(big.Int)
+	maxPriorityFeePerGas, ok := n.SetString(maxPriorityFeePerGasIn, 10)
+	    if !ok {
+		b.Logger().Error("maxPriorityFeePerGas SetString: error")
+		return nil, fmt.Errorf("maxPriorityFeePerGas SetString: error")
+	    }
 	
 	privateKey, err := crypto.HexToECDSA(account.PrivateKey)
 	if err != nil {
