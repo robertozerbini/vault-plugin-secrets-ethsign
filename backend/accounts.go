@@ -250,21 +250,21 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 	}
 	gasLimit := gasLimitIn.Uint64()
 
-	maxFeePerGasIn := ValidNumber(data.Get("maxFeePerGas").(string))
-	if maxFeePerGasIn == nil {
+	maxFeePerGas := ValidNumber(data.Get("maxFeePerGas").(string))
+	if maxFeePerGas == nil {
 		b.Logger().Error("Invalid maxFeePerGas", "gas", data.Get("maxFeePerGas").(string))
 		return nil, fmt.Errorf("Invalid maxFeePerGas limit")
 	}
-	maxFeePerGas := new(big.Int)
-	maxFeePerGas := maxFeePerGasIn
+
+
 		
-	maxPriorityFeePerGasIn := ValidNumber(data.Get("maxPriorityFeePerGas").(string))
-	if maxPriorityFeePerGasIn == nil {
+	maxPriorityFeePerGas := ValidNumber(data.Get("maxPriorityFeePerGas").(string))
+	if maxPriorityFeePerGas == nil {
 		b.Logger().Error("Invalid maxPriorityFeePerGas", "gas", data.Get("maxPriorityFeePerGas").(string))
 		return nil, fmt.Errorf("Invalid maxPriorityFeePerGas limit")
 	}
-	maxPriorityFeePerGas := new(big.Int)
-	maxPriorityFeePerGas := maxPriorityFeePerGasIn
+
+
 	
 	privateKey, err := crypto.HexToECDSA(account.PrivateKey)
 	if err != nil {
