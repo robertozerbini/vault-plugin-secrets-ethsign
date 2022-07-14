@@ -40,22 +40,22 @@ func pathSign(b *backend) *framework.Path {
 			"gas": &framework.FieldSchema{
 				Type:        framework.TypeString,
 				Description: "(optional, default: 90000) Integer of the gas provided for the transaction execution. It will return unused gas",
-				Default:     "90000",
+				//Default:     "90000",
 			},
 			"maxFeePerGas": &framework.FieldSchema{
 				Type:        framework.TypeString,
 				Description: "(optional, default: 0) the maximum amount of gas to be included as a tip to the miner",
-				Default:     "0",
+				//Default:     "0",
 			},
 			"maxPriorityFeePerGas": &framework.FieldSchema{
 				Type:        framework.TypeString,
 				Description: "(optional, default: 0)  the maximum amount of gas willing to be paid for the transaction (inclusive of baseFeePerGas and maxPriorityFeePerGas)",
-				Default:     "0",
+				//Default:     "0",
 			},
 			"chainId": &framework.FieldSchema{
 				Type:        framework.TypeString,
 				Description: "(optional) Chain ID of the target blockchain network. If present, EIP155 signer will be used to sign. If omitted, Homestead signer will be used.",
-				Default:     "0",
+				//Default:     "0",
 			},
 		},
 		ExistenceCheck: b.pathExistenceCheck,
