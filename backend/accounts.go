@@ -281,14 +281,14 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 	
 
 	// AccessTuple is the element type of an access list.
-	type AccessTuple struct {
-		Address     common.Address `json:"address"        gencodec:"required"`
-		StorageKeys []common.Hash  `json:"storageKeys"    gencodec:"required"`
-	}
+	//type AccessTuple struct {
+	//	Address     common.Address `json:"address"        gencodec:"required"`
+	//	StorageKeys []common.Hash  `json:"storageKeys"    gencodec:"required"`
+	//}
 	
-	type AccessList []AccessTuple
+	//type AccessList []AccessTuple
 	
-	var accesses  = AccessList{{Address: common.HexToAddress(rawAddressTo), StorageKeys: []common.Hash{{0}}}}
+	//var accesses  = AccessList{{Address: common.HexToAddress(rawAddressTo), StorageKeys: []common.Hash{{0}}}}
 	
 	if rawAddressTo == "" {
 		tx = types.NewTx(&types.DynamicFeeTx{
@@ -308,7 +308,6 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 					Value:     amount,
 					GasTipCap: maxFeePerGas,
 					GasFeeCap: maxPriorityFeePerGas,
-					AccessList: &accesses,
 					Data: txDataToSign,
 				})
 	}
