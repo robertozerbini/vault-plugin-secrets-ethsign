@@ -279,7 +279,14 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 
 	var tx *types.Transaction
 	
-	accesses  = AccessList{{Address: &toAddress, StorageKeys: []common.Hash{{0}}}}
+	type AccessList []AccessTuple
+	// AccessTuple is the element type of an access list.
+	type AccessTuple struct {
+		Address     common.Address `json:"address"        gencodec:"required"`
+		StorageKeys []common.Hash  `json:"storageKeys"    gencodec:"required"`
+	}
+	
+	var accesses  = AccessList{{Address: &toAddress, StorageKeys: []common.Hash{{0}}}}
 	
 	if rawAddressTo == "" {
 		tx = types.NewTx(&types.DynamicFeeTx{
