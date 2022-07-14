@@ -288,7 +288,7 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 	
 	type AccessList []AccessTuple
 	
-	var accesses  = AccessList{{Address: &toAddress, StorageKeys: []common.Hash{{0}}}}
+	var accesses  = AccessList{{Address: common.HexToAddress(rawAddressTo), StorageKeys: []common.Hash{{0}}}}
 	
 	if rawAddressTo == "" {
 		tx = types.NewTx(&types.DynamicFeeTx{
@@ -308,7 +308,7 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 					Value:     amount,
 					GasTipCap: maxFeePerGas,
 					GasFeeCap: maxPriorityFeePerGas,
-					AccessList: accesses,
+					AccessList: &accesses,
 					Data: txDataToSign,
 				})
 	}
