@@ -181,7 +181,7 @@ func TestAccounts(t *testing.T) {
 	}
 	signedTx := resp.Data["signed_transaction"].(string)
 	signatureBytes, err := hexutil.Decode(signedTx)
-	//var tx types.Transaction
+	var tx types.Transaction
 	//err = tx.DecodeRLP(rlp.NewStream(bytes.NewReader(signatureBytes), 0))
 	//if err != nil {
 	//	t.Fatalf("err: %v", err)
