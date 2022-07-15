@@ -182,10 +182,10 @@ func TestAccounts(t *testing.T) {
 	signedTx := resp.Data["signed_transaction"].(string)
 	signatureBytes, err := hexutil.Decode(signedTx)
 	var tx types.Transaction
-	//err = tx.DecodeRLP(rlp.NewStream(bytes.NewReader(signatureBytes), 0))
-	//if err != nil {
-	//	t.Fatalf("err: %v", err)
-	//}
+	err = tx.DecodeRLP(rlp.NewStream(bytes.NewReader(signatureBytes), 0))
+	if err != nil {
+		t.Fatalf("err: %v", err)
+	}
 	//v, _, _ := tx.RawSignatureValues()
 	//assert.Equal(true, contains([]*big.Int{big.NewInt(27), big.NewInt(28)}, v))
 
@@ -212,7 +212,7 @@ func TestAccounts(t *testing.T) {
 	}
 	signedTx = resp.Data["signed_transaction"].(string)
 	signatureBytes, err = hexutil.Decode(signedTx)
-	err = tx.Unmarshal(rlp.NewStream(bytes.NewReader(signatureBytes), 0))
+	err = tx.DecodeRLP(rlp.NewStream(bytes.NewReader(signatureBytes), 0))
 	if err != nil {
 		t.Fatalf("err: %v", err)
 	}
