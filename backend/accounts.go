@@ -324,8 +324,8 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 		return nil, err
 	}
 
-	//var signedTxBuff bytes.Buffer
-	raw,err := signedTx.MarshalBinary() //.EncodeRLP(&signedTxBuff)
+	var signedTxBuff bytes.Buffer
+	raw,err := signedTx.EncodeRLP(&signedTxBuff)
 	if err != nil {
 		b.Logger().Error("Failed to encode the transaction object", "error", err)
 		return nil, err
