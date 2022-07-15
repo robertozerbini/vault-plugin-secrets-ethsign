@@ -330,7 +330,7 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 	return &logical.Response{
 		Data: map[string]interface{}{
 			"transaction_hash":   signedTx.Hash().Hex(),
-			"signed_transaction": signedTx.Hex(), //hexutil.Encode(signedTxBuff.Bytes()),
+			"signed_transaction": signedTx.MarshalBinary(), //hexutil.Encode(signedTxBuff.Bytes()),
 		},
 	}, nil
 }
