@@ -306,7 +306,7 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 					Gas:       gasLimit,
 					GasTipCap: maxFeePerGas,
 					GasFeeCap: maxPriorityFeePerGas,	
-			                Nonce:     nonce,
+			        Nonce:     nonce,
 					To:        &toAddress,
 					Data: txDataToSign,
 				})
@@ -324,13 +324,13 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 		return nil, err
 	}
 
-	var signedTxBuff bytes.Buffer
-	signedTx.EncodeRLP(&signedTxBuff)
+	//var signedTxBuff bytes.Buffer
+	//signedTx.EncodeRLP(&signedTxBuff)
 
 	return &logical.Response{
 		Data: map[string]interface{}{
 			"transaction_hash":   signedTx.Hash().Hex(),
-			"signed_transaction": hexutil.Encode(signedTxBuff.Bytes()),
+			"signed_transaction": signedTx.Hex() //hexutil.Encode(signedTxBuff.Bytes()),
 		},
 	}, nil
 }
