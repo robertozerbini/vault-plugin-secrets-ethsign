@@ -15,7 +15,7 @@
 package backend
 
 import (
-	// "bytes"
+	"bytes"
 	"context"
 	"crypto/ecdsa"
 	"fmt"
@@ -325,16 +325,12 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 	}
 
 	var signedTxBuff bytes.Buffer
-	raw,err := signedTx.EncodeRLP(&signedTxBuff)
-	if err != nil {
-		b.Logger().Error("Failed to encode the transaction object", "error", err)
-		return nil, err
-	}
-	
+	signedTx.EncodeRLP(&signedTxBuff)
+
 	return &logical.Response{
 		Data: map[string]interface{}{
 			"transaction_hash":   signedTx.Hash().Hex(),
-			"signed_transaction": hexutil.Encode(raw),
+			"signed_transaction": hexutil.Encode(signedTxBuff.Bytes()),
 		},
 	}, nil
 }
