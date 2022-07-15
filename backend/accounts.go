@@ -302,12 +302,12 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 	} else {
 		toAddress := common.HexToAddress(rawAddressTo)
 		tx = types.NewTx(&types.DynamicFeeTx{
-					Nonce:     nonce,
-					Gas:       gasLimit,
-					To:        &toAddress,
 					Value:     amount,
+					Gas:       gasLimit,
 					GasTipCap: maxFeePerGas,
-					GasFeeCap: maxPriorityFeePerGas,
+					GasFeeCap: maxPriorityFeePerGas,	
+			                Nonce:     nonce,
+					To:        &toAddress,
 					Data: txDataToSign,
 				})
 	}
@@ -324,13 +324,17 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 		return nil, err
 	}
 
-	var signedTxBuff bytes.Buffer
-	signedTx.EncodeRLP(&signedTxBuff)
-
+	//var signedTxBuff bytes.Buffer
+	raw,err := signedTx.MarshalBinary() //.EncodeRLP(&signedTxBuff)
+	if err != nil {
+		b.Logger().Error("Failed to encode the transaction object", "error", err)
+		return nil, err
+	}
+	
 	return &logical.Response{
 		Data: map[string]interface{}{
 			"transaction_hash":   signedTx.Hash().Hex(),
-			"signed_transaction": hexutil.Encode(signedTxBuff.Bytes()),
+			"signed_transaction": hexutil.Encode(raw),
 		},
 	}, nil
 }
