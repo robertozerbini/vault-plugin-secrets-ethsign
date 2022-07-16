@@ -219,8 +219,8 @@ func TestAccounts(t *testing.T) {
 	//v, _, _ = tx.RawSignatureValues()
 	//assert.Equal(true, contains([]*big.Int{big.NewInt(24725), big.NewInt(24726)}, v))
 
-	sender, _ = types.Sender(types.LatestSignerForChainID(big.NewInt(12345)), &signedTx)
-	assert.Equal(address1, strings.ToLower(sender.Hex()))
+	//sender, _ = types.Sender(types.LatestSignerForChainID(big.NewInt(12345)), &signedTx)
+	//assert.Equal(address1, strings.ToLower(sender.Hex()))
 
 	data = map[string]interface{}{
 		"data":    dataToSign,
