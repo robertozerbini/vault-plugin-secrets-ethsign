@@ -70,12 +70,12 @@ func (b *backend) createAccount(ctx context.Context, req *logical.Request, data 
 	var err error
 
 	if keyInput != "" {
-    re := regexp.MustCompile("[0-9a-fA-F]{64}$")
-    key := re.FindString(keyInput)
-    if key == "" {
-      b.Logger().Error("Input private key did not parse successfully", "privateKey", keyInput)
-      return nil, fmt.Errorf("privateKey must be a 32-byte hexidecimal string")
-    }
+		re := regexp.MustCompile("[0-9a-fA-F]{64}$")
+		key := re.FindString(keyInput)
+		if key == "" {
+			b.Logger().Error("Input private key did not parse successfully", "privateKey", keyInput)
+			return nil, fmt.Errorf("privateKey must be a 32-byte hexidecimal string")
+		}
 		privateKey, err = crypto.HexToECDSA(key)
 		if err != nil {
 			b.Logger().Error("Error reconstructing private key from input hex", "error", err)
@@ -256,16 +256,12 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 		return nil, fmt.Errorf("Invalid maxFeePerGas limit")
 	}
 
-
-		
 	maxPriorityFeePerGas := ValidNumber(data.Get("maxPriorityFeePerGas").(string))
 	if maxPriorityFeePerGas == nil {
 		b.Logger().Error("Invalid maxPriorityFeePerGas", "gas", data.Get("maxPriorityFeePerGas").(string))
 		return nil, fmt.Errorf("Invalid maxPriorityFeePerGas limit")
 	}
 
-
-	
 	privateKey, err := crypto.HexToECDSA(account.PrivateKey)
 	if err != nil {
 		b.Logger().Error("Error reconstructing private key from retrieved hex", "error", err)
@@ -278,38 +274,28 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 	nonce = nonceIn.Uint64()
 
 	var tx *types.Transaction
-	
 
-	// AccessTuple is the element type of an access list.
-	//type AccessTuple struct {
-	//	Address     common.Address `json:"address"        gencodec:"required"`
-	//	StorageKeys []common.Hash  `json:"storageKeys"    gencodec:"required"`
-	//}
-	
-	//type AccessList []AccessTuple
-	
-	//var accesses  = AccessList{{Address: common.HexToAddress(rawAddressTo), StorageKeys: []common.Hash{{0}}}}
-	
 	if rawAddressTo == "" {
 		tx = types.NewTx(&types.DynamicFeeTx{
-					Nonce:     nonce,
-					Gas:       gasLimit,
-					Value:     amount,
-					GasTipCap: maxFeePerGas,
-					GasFeeCap: maxPriorityFeePerGas,
-					Data: txDataToSign,
-				})
+			Nonce:     nonce,
+			Gas:       gasLimit,
+			Value:     amount,
+			GasTipCap: maxFeePerGas,
+			GasFeeCap: maxPriorityFeePerGas,
+			Data:      txDataToSign,
+		})
 	} else {
 		toAddress := common.HexToAddress(rawAddressTo)
 		tx = types.NewTx(&types.DynamicFeeTx{
-					Value:     amount,
-					Gas:       gasLimit,
-					GasTipCap: maxFeePerGas,
-					GasFeeCap: maxPriorityFeePerGas,	
-			        Nonce:     nonce,
-					To:        &toAddress,
-					Data: txDataToSign,
-				})
+			ChainID:   chainId,
+			Value:     amount,
+			Gas:       gasLimit,
+			GasTipCap: maxFeePerGas,
+			GasFeeCap: maxPriorityFeePerGas,
+			Nonce:     nonce,
+			To:        &toAddress,
+			Data:      txDataToSign,
+		})
 	}
 	var signer types.Signer
 	//if big.NewInt(0).Cmp(chainId) == 0 {
@@ -317,7 +303,7 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 	//} else {
 	signer = types.LatestSignerForChainID(chainId)
 	//}
-	
+
 	signedTx, err := types.SignTx(tx, signer, privateKey)
 	if err != nil {
 		b.Logger().Error("Failed to sign the transaction object", "error", err)
@@ -326,12 +312,12 @@ func (b *backend) signTx(ctx context.Context, req *logical.Request, data *framew
 
 	//var signedTxBuff bytes.Buffer
 	//signedTx.EncodeRLP(&signedTxBuff)
-    rawTx, err := signedTx.MarshalBinary()
+	rawTx, err := signedTx.MarshalBinary()
 
 	return &logical.Response{
 		Data: map[string]interface{}{
 			"transaction_hash":   signedTx.Hash().Hex(),
-			"signed_transaction": rawTx, //hexutil.Encode(signedTxBuff.Bytes()),
+			"signed_transaction": hexutil.Encode(rawTx), //hexutil.Encode(signedTxBuff.Bytes()),
 		},
 	}, nil
 }

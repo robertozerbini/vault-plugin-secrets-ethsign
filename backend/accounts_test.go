@@ -15,18 +15,22 @@
 package backend
 
 import (
-	"bytes"
+	//"bytes"
 	"context"
 	"errors"
+	"fmt"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/core/types"
 	"math/big"
 	"reflect"
-	"strings"
+	//"strings"
+
+	//"strings"
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/rlp"
+	//"github.com/ethereum/go-ethereum/core/types"
+	//"github.com/ethereum/go-ethereum/rlp"
 
 	log "github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/vault/sdk/helper/logging"
@@ -87,7 +91,53 @@ func newStorageMock() StorageMock {
 	sm.switches = []int{0, 0, 0, 0}
 	return sm
 }
+func TestLondonSign(t *testing.T) {
+	assert := assert.New(t)
+	expectedSigned := "0x02f8af2a62849502f900849502f90e82715c94e22da380ee6b445bb8273c81944adeb6e845042280b844095ea7b3000000000000000000000000e0fba4fc209b4948668006b2be61711b7f465bae00000000000000000000000000000000000000000000000000000000107d272dc001a0768170050caf492db717a77725bac1833ed2155f29168d18dea362c56beeeaf6a04da3e2e5b156bd1ffa65548063977c3bcfc0f8265d19fe9c36156a6672c5eb11"
 
+	//create new account
+	b, _ := getBackend(t)
+	req := logical.TestRequest(t, logical.UpdateOperation, "accounts")
+	storage := req.Storage
+	pk := map[string]interface{}{
+		"privateKey": "704c62772876581fd2c82369e94516a4b3610b92a9c1d18c3fecde2f9bf337f0",
+	}
+	req.Data = pk
+	res, err := b.HandleRequest(context.Background(), req)
+	if err != nil {
+		t.Fatalf("err: %v", err)
+	}
+
+	address := res.Data["address"].(string)
+
+	req = logical.TestRequest(t, logical.CreateOperation, "accounts/"+address+"/sign")
+	req.Storage = storage
+	data := map[string]interface{}{"value": 0, "gas": 29020, "maxFeePerGas": 12500000014, "maxPriorityFeePerGas": 12500000014, "chainId": 42,
+		"nonce": 99, "from": "0xe6AA215c758FdAB0DD829FA81df9749e10f7C91a",
+		"to":   "0xe22da380ee6B445bb8273C81944ADEB6E8450422",
+		"data": "0x095ea7b3000000000000000000000000e0fba4fc209b4948668006b2be61711b7f465bae00000000000000000000000000000000000000000000000000000000107d272d"}
+
+	req.Data = data
+	resp, err := b.HandleRequest(context.Background(), req)
+	if err != nil {
+		t.Fatalf("err: %v", err)
+	}
+	//fmt.Println(resp.Data["signed_transaction"])
+	signedTx := resp.Data["signed_transaction"].(string)
+	fmt.Println(signedTx)
+	signatureBytes, err := hexutil.Decode(signedTx)
+	var tx types.Transaction
+	tx.UnmarshalBinary(signatureBytes)
+
+	//err = tx.DecodeRLP(rlp.NewStream(bytes.NewReader(signatureBytes), 0))
+
+	signatureBytes, err = hexutil.Decode(expectedSigned)
+	var tx1 types.Transaction
+	tx1.UnmarshalBinary(signatureBytes)
+
+	//assert.Equal(expectedSigned, signedTx)
+	assert.Equal(tx1.Data(), tx.Data())
+}
 func TestAccounts(t *testing.T) {
 	assert := assert.New(t)
 
@@ -102,6 +152,7 @@ func TestAccounts(t *testing.T) {
 	}
 
 	address1 := res.Data["address"].(string)
+	fmt.Println(address1)
 
 	// create key2
 	req = logical.TestRequest(t, logical.UpdateOperation, "accounts")
@@ -112,7 +163,7 @@ func TestAccounts(t *testing.T) {
 	}
 
 	address2 := res.Data["address"].(string)
-
+	fmt.Println(address2)
 	req = logical.TestRequest(t, logical.ListOperation, "accounts")
 	req.Storage = storage
 	resp, err := b.HandleRequest(context.Background(), req)
@@ -167,26 +218,30 @@ func TestAccounts(t *testing.T) {
 	req = logical.TestRequest(t, logical.CreateOperation, "accounts/"+address1+"/sign")
 	req.Storage = storage
 	data := map[string]interface{}{
-		"data":     dataToSign,
-		"gas":      500000,
-		"nonce":    "0x2",
-		"maxFeePerGas": 100,
-		"maxPriorityFeePerGas" : 100,
-		"chainId":  12345,
+		"data":                 dataToSign,
+		"gas":                  500000,
+		"nonce":                "0x2",
+		"maxFeePerGas":         100,
+		"maxPriorityFeePerGas": 100,
+		"chainId":              12345,
 	}
+
 	req.Data = data
 	resp, err = b.HandleRequest(context.Background(), req)
 	if err != nil {
 		t.Fatalf("err: %v", err)
 	}
+	fmt.Println(resp.Data["signed_transaction"])
 	signedTx := resp.Data["signed_transaction"].(string)
 	signatureBytes, err := hexutil.Decode(signedTx)
-	//var tx types.Transaction
+	var tx types.Transaction
 	//err = tx.DecodeRLP(rlp.NewStream(bytes.NewReader(signatureBytes), 0))
-	//if err != nil {
-	//	t.Fatalf("err: %v", err)
-	//}
-	//v, _, _ := tx.RawSignatureValues()
+	tx.UnmarshalBinary(signatureBytes)
+	if err != nil {
+		t.Fatalf("err: %v", err)
+	}
+	v, _, _ := tx.RawSignatureValues()
+	fmt.Println(v)
 	//assert.Equal(true, contains([]*big.Int{big.NewInt(27), big.NewInt(28)}, v))
 
 	//sender, _ := types.Sender(types.LatestSignerForChainID(big.NewInt(12345)), &tx)
@@ -197,13 +252,13 @@ func TestAccounts(t *testing.T) {
 	req = logical.TestRequest(t, logical.CreateOperation, "accounts/"+address2[2:]+"/sign")
 	req.Storage = storage
 	data = map[string]interface{}{
-		"data":     dataToSign,
-		"to":       "0xf809410b0d6f047c603deb311979cd413e025a84",
-		"gas":      50000,
-		"nonce":    "0x3",
-		"maxFeePerGas": 100,
-		"maxPriorityFeePerGas" : 100,
-		"chainId":  12345,
+		"data":                 dataToSign,
+		"to":                   "0xf809410b0d6f047c603deb311979cd413e025a84",
+		"gas":                  50000,
+		"nonce":                "0x3",
+		"maxFeePerGas":         100,
+		"maxPriorityFeePerGas": 100,
+		"chainId":              12345,
 	}
 	req.Data = data
 	resp, err = b.HandleRequest(context.Background(), req)
@@ -223,13 +278,13 @@ func TestAccounts(t *testing.T) {
 	//assert.Equal(address1, strings.ToLower(sender.Hex()))
 
 	data = map[string]interface{}{
-		"data":    dataToSign,
-		"to":       "0xf809410b0d6f047c603deb311979cd413e025a84",
-		"gas":      50000,
-		"nonce":    "0x3",
-		"maxFeePerGas": 100,
-		"maxPriorityFeePerGas" : 100,
-		"chainId":  12345,
+		"data":                 dataToSign,
+		"to":                   "0xf809410b0d6f047c603deb311979cd413e025a84",
+		"gas":                  50000,
+		"nonce":                "0x3",
+		"maxFeePerGas":         100,
+		"maxPriorityFeePerGas": 100,
+		"chainId":              12345,
 	}
 	req.Data = data
 	resp, err = b.HandleRequest(context.Background(), req)
@@ -280,19 +335,19 @@ func TestAccounts(t *testing.T) {
 	address3 := res.Data["address"].(string)
 	assert.Equal("0xd5bcc62d9b1087a5cfec116c24d6187dd40fdf8a", address3)
 
-  // import key4 using '0x' prefix
-  req = logical.TestRequest(t, logical.UpdateOperation, "accounts")
-  req.Storage = storage
-  data = map[string]interface{}{
-    "privateKey": "0xec85999367d32fbbe02dd600a2a44550b95274cc67d14375a9f0bce233f13ad2",
-  }
-  req.Data = data
-  res, err = b.HandleRequest(context.Background(), req)
-  if err != nil {
-    t.Fatalf("err: %v", err)
-  }
-  address4 := res.Data["address"].(string)
-  assert.Equal("0xd5bcc62d9b1087a5cfec116c24d6187dd40fdf8a", address4)
+	// import key4 using '0x' prefix
+	req = logical.TestRequest(t, logical.UpdateOperation, "accounts")
+	req.Storage = storage
+	data = map[string]interface{}{
+		"privateKey": "0xec85999367d32fbbe02dd600a2a44550b95274cc67d14375a9f0bce233f13ad2",
+	}
+	req.Data = data
+	res, err = b.HandleRequest(context.Background(), req)
+	if err != nil {
+		t.Fatalf("err: %v", err)
+	}
+	address4 := res.Data["address"].(string)
+	assert.Equal("0xd5bcc62d9b1087a5cfec116c24d6187dd40fdf8a", address4)
 
 	// export key3
 	req = logical.TestRequest(t, logical.ReadOperation, "export/accounts/0xd5bcc62d9b1087a5cfec116c24d6187dd40fdf8a")
@@ -303,11 +358,11 @@ func TestAccounts(t *testing.T) {
 	}
 	assert.Equal("ec85999367d32fbbe02dd600a2a44550b95274cc67d14375a9f0bce233f13ad2", res.Data["privateKey"])
 
-  // validate de-dup of same private keys imported multiple times
-  req = logical.TestRequest(t, logical.ListOperation, "accounts")
-  req.Storage = storage
-  resp, _ = b.HandleRequest(context.Background(), req)
-  assert.Equal(1, len(resp.Data))
+	// validate de-dup of same private keys imported multiple times
+	req = logical.TestRequest(t, logical.ListOperation, "accounts")
+	req.Storage = storage
+	resp, _ = b.HandleRequest(context.Background(), req)
+	assert.Equal(1, len(resp.Data))
 }
 
 func TestListAccountsFailure1(t *testing.T) {
@@ -351,20 +406,20 @@ func TestCreateAccountsFailure2(t *testing.T) {
 }
 
 func TestCreateAccountsFailure3(t *testing.T) {
-  assert := assert.New(t)
+	assert := assert.New(t)
 
-  b, _ := getBackend(t)
-  req := logical.TestRequest(t, logical.UpdateOperation, "accounts")
-  data := map[string]interface{}{
-    // use N for the secp256k1 curve to trigger an error
-    "privateKey": "fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141",
-  }
-  req.Data = data
-  sm := newStorageMock()
-  req.Storage = sm
-  _, err := b.HandleRequest(context.Background(), req)
+	b, _ := getBackend(t)
+	req := logical.TestRequest(t, logical.UpdateOperation, "accounts")
+	data := map[string]interface{}{
+		// use N for the secp256k1 curve to trigger an error
+		"privateKey": "fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141",
+	}
+	req.Data = data
+	sm := newStorageMock()
+	req.Storage = sm
+	_, err := b.HandleRequest(context.Background(), req)
 
-  assert.Equal("Error reconstructing private key from input hex", err.Error())
+	assert.Equal("Error reconstructing private key from input hex", err.Error())
 }
 
 func TestReadAccountsFailure1(t *testing.T) {
